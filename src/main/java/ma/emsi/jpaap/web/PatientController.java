@@ -34,7 +34,7 @@ public class PatientController {
 
 
     // Avec Pagination
-    @GetMapping(path="/index")
+    @GetMapping(path="/user/index")
     public String patients(Model model,
                            @RequestParam(name = "page",defaultValue = "0") int page,
                            @RequestParam(name = "size",defaultValue = "5") int size,
@@ -47,37 +47,44 @@ public class PatientController {
         return "patients";
     }
 
-    @GetMapping("/delete")
+    // Get Root to redirect to index
+
+    @GetMapping(path="/")
+    public String root(){
+        return "home";
+    }
+
+    @GetMapping("/admin/delete")
     public String delete(Long id, String keyword, int page){
         patientRepository.deleteById(id);
-        return "redirect:/index?page="+page+"&keyword="+keyword;
+        return "redirect:/user/index?page="+page+"&keyword="+keyword;
     }
 
 
-    @GetMapping("/patients")
+    @GetMapping("/admin/patients")
     @ResponseBody
     public List<Patient> listPatients(){
         return patientRepository.findAll();
     }
 
     // Get Add Patient Form
-    @GetMapping("/formPatients")
+    @GetMapping("/admin/formPatients")
     public String formPatient(Model model){
         model.addAttribute("patient",new Patient());
         return "formPatients";
     }
 
     // Add Patient using Post Form
-    @PostMapping(path="/save")
+    @PostMapping(path="/admin/save")
     public String save(Model model, @Valid Patient patient , BindingResult bindingResult){
         if(bindingResult.hasErrors()) return "formPatients";
         patientRepository.save(patient);
-        return "redirect:/index";
+        return "redirect:/user/index";
     }
 
     // Edit Patient
 
-    @GetMapping("/editPatient")
+    @GetMapping("/admin/editPatient")
     public String editPatient(Model model,Long id){
         Patient patient = patientRepository.findById(id).get();
         model.addAttribute("patient",patient);
